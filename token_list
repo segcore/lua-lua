@@ -1,0 +1,15 @@
+and       break     do        else      elseif    end
+false     for       function  goto      if        in
+local     nil       not       or        repeat    return
+then      true      until     while
++     -     *     /     %     ^     #
+&     ~     |     <<    >>    //
+==    ~=    <=    >=    <     >     =
+(     )     {     }     [     ]     ::
+;     :     ,     .     ..    ...
+"double quoted string"
+'single quoted string'
+[[Very cool strings]]
+[[They're even
+multi-line
+oh no! or oh yay?]]
