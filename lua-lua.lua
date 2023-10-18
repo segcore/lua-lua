@@ -161,11 +161,25 @@ local function parse_long_string(parser, opening)
 	while true do
 		local char = parser.next()
 		if not char then error('No end of string for long string') end
-		str = str .. char
-
-		if string.match(str, pattern) then
-			str = string.sub(str, 1, #str - #ending)
-			break
+		if char == '\r' or char == '\n' then
+			-- consume new line sequences [\r, \n, \r\n, \n\r]
+			-- and add only \n, as per Lua spec
+			char = '\n'
+			local char2 = parser.next()
+			if (char2 == '\r' or char2 == '\n') and char ~= char2 then
+				-- consumed
+			else
+				parser.unget(char2)
+			end
+		end
+		if #str == 0 and char == '\n' then
+			-- must ignore
+		else
+			str = str .. char
+			if string.match(str, pattern) then
+				str = string.sub(str, 1, #str - #ending)
+				break
+			end
 		end
 	end
 	return string.format('%q', str)
@@ -345,6 +359,22 @@ local token_stream = coroutine.wrap(function()
 			local char2 = parser.next()
 			if char2 == '[' then
 				yield(types.STRING, parse_long_string(parser, '[['))
+			elseif char2 == '=' then
+				local str = '[='
+				while true do
+					local char3 = parser.next()
+					if char3 == '=' then
+						str = str .. char3
+					elseif char3 == '[' then
+						str = str .. char3
+						yield(types.STRING, parse_long_string(parser, str))
+						break
+					else
+						yield(types.UNKNOWN, str)
+						parser.unget(char3)
+						break
+					end
+				end
 			else
 				parser.unget(char2)
 				yield(types.SQUARE_OPEN, char)

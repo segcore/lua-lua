@@ -13,6 +13,14 @@ then      true      until     while
 [[They're even
 multi-line
 oh no! or oh yay?]]
+[=[ fancy long string 1 ]=]
+[==[ fancy long string 2 ]==]
+[===[
+fancy
+long
+string 3
+]===]--comment
+[==[ tricky =]  ]=] still going ]===] now it ends]==]
 --single line comment
 --[[ multi-line
 comment]]
