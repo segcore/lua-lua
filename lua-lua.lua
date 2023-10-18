@@ -1,15 +1,15 @@
-local parser = {}
+local parser = { last = '' }
 function parser.next()
-	if parser.last then
-		local last = parser.last
-		parser.last = nil
-		return last
+	if #parser.last > 0 then
+		local last_char = string.sub(parser.last, 1, 1)
+		parser.last = string.sub(parser.last, 2, #parser.last)
+		return last_char
 	else
 		return io.read(1)
 	end
 end
 function parser.unget(c)
-	parser.last = c
+	parser.last = c .. parser.last
 end
 
 local function lextype(type, content)
@@ -140,6 +140,20 @@ local function parse_string(parser, quote)
 	return string.format('%q', str)
 end
 
+local function parse_long_comment(parser, opener)
+	local str = opener
+	while true do
+		local char = parser.next()
+		if not char then error('No end of comment for ' .. opener) end
+		str = str .. char
+		if char == ']' and string.find(str, ']]$', #str - 2) then
+			break
+		end
+	end
+	return str
+end
+
+
 local function parse_long_string(parser, opening)
 	local str = ''
 	local ending = ']' .. string.rep('=', #opening - 2) .. ']'
@@ -192,8 +206,31 @@ local token_stream = coroutine.wrap(function()
 		elseif char == '-' then
 			local char2 = parser.next()
 			if char2 == '-' then
-				local extra = io.read("*l")
-				yield(types.COMMENT, '--' .. extra)
+				local handled = false
+				local char3 = parser.next()
+				if char3 == '[' then
+					local char4 = parser.next()
+					if char4 == '[' then
+						handled = true
+						yield(types.COMMENT, parse_long_comment(parser, '--[['))
+					else
+						parser.unget(char4)
+						parser.unget(char3)
+					end
+				else
+					parser.unget(char3)
+				end
+				if not handled then
+					local str = '--'
+					while true do
+						local next = parser.next()
+						str = str .. next
+						if next == '\n' then
+							yield(types.COMMENT, str)
+							break
+						end
+					end
+				end
 			else
 				parser.unget(char2)
 				yield(types.MINUS, '-')

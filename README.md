@@ -16,7 +16,5 @@ Can lex most of lua into tokens. Currently prints them to the screen.
 ### Known issues
 
 - Does not support `[==[ style long strings ]==]`
-- Does not support `--[[ long comments ]]` over multiple lines (one line
-  is easy, right? You just ignore it!)
 - Does not support string escapes for `\z`, `\ddd`, `\xXX`, `\u{XXX}`
 - Does not support hexadecimal floating points (honestly?)

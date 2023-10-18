@@ -13,3 +13,9 @@ then      true      until     while
 [[They're even
 multi-line
 oh no! or oh yay?]]
+--single line comment
+--[[ multi-line
+comment]]
+--[[ tricky ] ]
+xx ]]
+--[a[bcd]]z
