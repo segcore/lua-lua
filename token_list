@@ -9,6 +9,9 @@ then      true      until     while
 ;     :     ,     .     ..    ...
 "double quoted string"
 'single quoted string'
+"strings with\nescapes \z
+   and\z
+   stuff"
 [[Very cool strings]]
 [[They're even
 multi-line

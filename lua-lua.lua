@@ -129,6 +129,15 @@ local function parse_string(parser, quote)
 			elseif char2 == '\\' then result = '\\'
 			elseif char2 == '"' then result = '\"'
 			elseif char2 == "'" then result = "'"
+			elseif char2 == 'z' then
+				-- skip all whitespace
+				while true do
+					result = parser.next()
+					if not result then result = '' break end
+					if not string.find(result, '%s') then
+						break
+					end
+				end
 			else result = char2 end
 			str = str .. result
 		elseif char == quote then

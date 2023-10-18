@@ -15,5 +15,5 @@ Can lex most of lua into tokens. Currently prints them to the screen.
 
 ### Known issues
 
-- Does not support string escapes for `\z`, `\ddd`, `\xXX`, `\u{XXX}`
+- Does not support string escapes for `\ddd`, `\xXX`, `\u{XXX}`
 - Does not support hexadecimal floating points (honestly?)
